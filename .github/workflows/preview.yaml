@@ -10,16 +10,41 @@ jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.2
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./apps/api/terraform
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./apps/api/terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./apps/api/terraform
+
+      - name: Output Test GRAPHQL_URL
+        run: Terraform output -json api_uris | jq -r ".GRAPHQL" > ../web/.env
+        working-directory: ./apps/api/terraform
+
       - name: Install Vercel CLI
         run: npm install --global vercel@canary
+
       - name: Install pnpm
         run: npm install --global pnpm
+
       - name: Set Vercel Environment
         run: vercel env add TEST_ENV_VALUE abcdefg develop --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
