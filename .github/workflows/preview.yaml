@@ -19,9 +19,22 @@ jobs:
         run: terraform init
         working-directory: ./apps/api/terraform
 
-      # - name: Terraform Plan
-      #   run: terraform plan
-      #   working-directory: ./apps/api/terraform
+      - name: Generate terraform.tfvars
+        env:
+          REGION: 'ap-northeast-1'
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        run: |
+          cat <<EOF > terraform.tfvars
+          region = "${REGION}"
+          access_key = "${AWS_ACCESS_KEY}"
+          secret_key = "${AWS_SECRET_KEY}"
+          EOF
+        working-directory: ./apps/api/terraform
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./apps/api/terraform
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
