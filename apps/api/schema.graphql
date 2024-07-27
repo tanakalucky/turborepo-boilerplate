@@ -1,0 +1,13 @@
+schema {
+  query: Query
+}
+
+type Query {
+  test1: Response
+  test2: Response
+}
+
+type Response {
+  statusCode: Int!
+  body: String!
+}
