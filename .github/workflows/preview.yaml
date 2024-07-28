@@ -38,6 +38,10 @@ jobs:
           EOF
         working-directory: ./apps/api/terraform
 
+      - name: Install Dependencies
+        run: pnpm i
+        working-directory: ./apps/api
+
       - name: Build Lambda Source
         run: pnpm build
         working-directory: ./apps/api/
