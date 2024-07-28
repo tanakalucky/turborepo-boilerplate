@@ -55,7 +55,7 @@ jobs:
         working-directory: ./apps/api/terraform
 
       - name: Output Test GRAPHQL_URL
-        run: Terraform output -json api_uris | jq -r ".GRAPHQL" > ../web/.env
+        run: terraform output -json api_uris | jq -r ".GRAPHQL" > ../web/.env
         working-directory: ./apps/api/terraform
 
       - name: Install Vercel CLI
