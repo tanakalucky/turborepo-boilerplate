@@ -77,3 +77,5 @@ terraform.rc
 
 builds/
 .vercel
+
+backend.conf
