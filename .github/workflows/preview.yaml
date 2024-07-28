@@ -21,8 +21,23 @@ jobs:
       - name: Install pnpm
         run: npm install --global pnpm
 
+      - name: Generate backend.conf
+        env:
+          KEY: 'turborepo-test/develop'
+          REGION: 'ap-northeast-1'
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        run: |
+          cat <<EOF > backend.conf
+          key = "${KEY}"
+          region = "${REGION}"
+          access_key = "${AWS_ACCESS_KEY}"
+          secret_key = "${AWS_SECRET_KEY}"
+          EOF
+        working-directory: ./apps/api/terraform
+
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend-config=backend.conf
         working-directory: ./apps/api/terraform
 
       - name: Generate terraform.tfvars
