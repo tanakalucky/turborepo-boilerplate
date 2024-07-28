@@ -42,11 +42,15 @@ jobs:
 
       - name: Generate terraform.tfvars
         env:
+          APP_NAME: 'turborepo-test'
+          ENV: 'dev'
           REGION: 'ap-northeast-1'
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
         run: |
           cat <<EOF > terraform.tfvars
+          app_name = "${APP_NAME}"
+          env = "${ENV}"
           region = "${REGION}"
           access_key = "${AWS_ACCESS_KEY}"
           secret_key = "${AWS_SECRET_KEY}"

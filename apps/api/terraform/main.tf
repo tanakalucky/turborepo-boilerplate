@@ -13,7 +13,6 @@ resource "aws_appsync_api_key" "this" {
 }
 
 resource "aws_iam_role" "appsync_role" {
-  name = "appsync_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -92,7 +91,7 @@ resource "aws_appsync_resolver" "mutation_example" {
 module "lambda1" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "lambda-function-1"
+  function_name = "${var.app_name}-lambda-function-1-${var.env}"
   handler       = "index.handler"
   runtime       = "nodejs20.x"
   source_path   = "../dist/test"
@@ -108,7 +107,7 @@ module "lambda1" {
 module "lambda2" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "lambda-function-2"
+  function_name = "${var.app_name}-lambda-function-2-${var.env}"
   handler       = "index.handler"
   runtime       = "nodejs20.x"
   source_path   = "../dist/test2"
