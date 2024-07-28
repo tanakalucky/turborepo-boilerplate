@@ -18,6 +18,9 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Install pnpm
+        run: npm install --global pnpm
+
       - name: Terraform Init
         run: terraform init
         working-directory: ./apps/api/terraform
@@ -53,9 +56,6 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm install --global vercel@canary
-
-      - name: Install pnpm
-        run: npm install --global pnpm
 
       - name: Set Vercel Environment
         run: vercel env add TEST_ENV_VALUE abcdefg develop --token=${{ secrets.VERCEL_TOKEN }}
