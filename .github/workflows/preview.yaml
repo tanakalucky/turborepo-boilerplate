@@ -35,6 +35,10 @@ jobs:
           EOF
         working-directory: ./apps/api/terraform
 
+      - name: Build Lambda Source
+        run: pnpm build
+        working-directory: ./apps/api/
+
       - name: Terraform Plan
         run: terraform plan
         working-directory: ./apps/api/terraform
