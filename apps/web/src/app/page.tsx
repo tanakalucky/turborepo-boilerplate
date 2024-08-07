@@ -1,5 +1,8 @@
+'use client';
+
 import Image from 'next/image';
 import { Card } from '@repo/ui/card';
+import { gql, useQuery } from 'urql';
 
 function Gradient({ conic, className, small }: { small?: boolean; conic?: boolean; className?: string }): JSX.Element {
   return (
@@ -34,9 +37,21 @@ const LINKS = [
   },
 ];
 
+const Test1Query = gql`
+  query {
+    test1 {
+      statusCode
+      body
+    }
+  }
+`;
+
 export default function Page(): JSX.Element {
-  // eslint-disable-next-line no-console -- test
-  console.log(process.env.GRAPHQL);
+  const [result] = useQuery({
+    query: Test1Query,
+  });
+
+  console.log('test graphql ', result);
 
   return (
     <main className='flex flex-col items-center justify-between min-h-screen p-24'>
