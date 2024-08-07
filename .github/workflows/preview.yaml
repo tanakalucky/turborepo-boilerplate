@@ -9,6 +9,7 @@ on:
 jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -73,9 +74,23 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./apps/api/terraform
 
-      - name: Generate .env
-        run: terraform output -json api_uris | jq -r ".GRAPHQL" > ../../web/.env
+      - name: Get GraphQL URL
+        id: get_graphql_url
+        run: echo "::set-output name=graphql_url::$(terraform output -raw graphql_url)"
         working-directory: ./apps/api/terraform
+
+      - name: Get Api Key
+        id: get_api_key
+        run: echo "::set-output name=api_key::$(terraform output -raw api_key)"
+        working-directory: ./apps/api/terraform
+
+      - name: Generate .env
+        run: |
+          cat <<EOF > .env
+          GRAPHQL_URL="${{ steps.get_graphql_url.outputs.graphql_url }}"
+          API_KEY="${{ steps.get_api_key.outputs.get_api_key }}"
+          EOF
+        working-directory: ./apps/web
 
       - name: Install Vercel CLI
         run: npm install --global vercel@canary

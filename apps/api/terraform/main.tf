@@ -9,7 +9,8 @@ resource "aws_appsync_graphql_api" "example" {
 }
 
 resource "aws_appsync_api_key" "this" {
-  api_id = aws_appsync_graphql_api.example.id
+  api_id  = aws_appsync_graphql_api.example.id
+  expires = timeadd(timestamp(), "365d")
 }
 
 resource "aws_iam_role" "appsync_role" {
