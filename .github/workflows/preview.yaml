@@ -74,22 +74,20 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./apps/api/terraform
 
-      - name: Get GraphQL URL
-        id: get_graphql_url
+      - name: Set GraphQL URL to GITHUB_OUTPUT
+        id: set_graphql_url
         run: echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
-      - name: Get Api Key
-        id: get_api_key
+      - name: Set Api Key to GITHUB_OUTPUT
+        id: set_api_key
         run: echo "api_key=$(terraform output -raw api_key)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
       - name: Generate .env
         run: |
-          cat <<EOF > .env
-          GRAPHQL_URL="${{ steps.get_graphql_url.outputs.graphql_url }}"
-          API_KEY="${{ steps.get_api_key.outputs.get_api_key }}"
-          EOF
+          echo "GRAPHQL_URL=${{ steps.set_graphql_url.outputs.graphql_url }}" >> .env
+          echo "API_KEY=${{ steps.set_api_key.outputs.api_key }}" > .env
         working-directory: ./apps/web
 
       - name: Install Vercel CLI
