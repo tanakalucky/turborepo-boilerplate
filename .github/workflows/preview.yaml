@@ -87,8 +87,8 @@ jobs:
 
       - name: Clear Vercel Environment Variables
         run: |
-          vercel env rm API_KEY preview --yes
-          vercel env rm GRAPHQL_URL preview --yes
+          vercel env rm API_KEY preview --yes --token=${{ secrets.VERCEL_TOKEN }}
+          vercel env rm GRAPHQL_URL preview --yes --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Set Vercel Environment Variables
         env:
