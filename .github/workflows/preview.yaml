@@ -84,14 +84,17 @@ jobs:
         run: echo "api_key=$(terraform output -raw api_key)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
-      - name: Generate .env
-        run: |
-          echo "GRAPHQL_URL=${{ steps.set_graphql_url.outputs.graphql_url }}" >> .env
-          echo "API_KEY=${{ steps.set_api_key.outputs.api_key }}" > .env
-        working-directory: ./apps/web
-
       - name: Install Vercel CLI
         run: npm install --global vercel@canary
+
+      - name: Set Vercel Environment Variables
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          API_KEY: ${{ steps.set_api_key.outputs.api_key }}
+          GRAPHQL_URL: ${{ steps.set_graphql_url.outputs.graphql_url }}
+        run: |
+          vercel env add API_KEY $API_KEY --token $VERCEL_TOKEN --env=preview
+          vercel env add GRAPHQL_URL $GRAPHQL_URL --token $VERCEL_TOKEN --env=preview
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
