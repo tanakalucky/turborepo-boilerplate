@@ -3,7 +3,7 @@ data "local_file" "graphql_schema" {
 }
 
 resource "aws_appsync_graphql_api" "example" {
-  name                = "example"
+  name                = "${var.app_name}_${var.env}"
   authentication_type = "API_KEY"
   schema              = data.local_file.graphql_schema.content
 }
