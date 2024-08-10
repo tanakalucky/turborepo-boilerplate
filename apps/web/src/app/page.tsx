@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Card } from '@repo/ui/card';
 import { gql, useQuery } from 'urql';
+import { graphql } from '../gql';
 
 function Gradient({ conic, className, small }: { small?: boolean; conic?: boolean; className?: string }): JSX.Element {
   return (
@@ -37,18 +38,18 @@ const LINKS = [
   },
 ];
 
-const Test1Query = gql`
-  query {
+const testQueryDocument = graphql(`
+  query testQuery {
     test1 {
       statusCode
       body
     }
   }
-`;
+`);
 
 export default function Page(): JSX.Element {
   const [result] = useQuery({
-    query: Test1Query,
+    query: testQueryDocument,
   });
 
   console.log('test graphql ', result);
