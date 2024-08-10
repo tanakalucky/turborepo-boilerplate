@@ -85,7 +85,7 @@ jobs:
         working-directory: ./apps/api/terraform
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@canary
+        run: npm install --global vercel@latest
 
       - name: Set Vercel Environment Variables
         env:
