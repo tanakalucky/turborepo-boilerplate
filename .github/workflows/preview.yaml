@@ -22,6 +22,14 @@ jobs:
       - name: Install pnpm
         run: npm install --global pnpm
 
+      - name: Setup pnpm global directory
+        run: |
+          pnpm setup
+          export PNPM_HOME="$HOME/.local/share/pnpm"
+          export PATH="$PNPM_HOME:$PATH"
+          echo "PNPM_HOME=$PNPM_HOME" >> $GITHUB_ENV
+          echo "$PNPM_HOME/bin" >> $GITHUB_PATH
+
       - name: Generate backend.conf
         env:
           KEY: 'turborepo-test/develop'
