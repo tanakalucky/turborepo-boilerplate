@@ -2,14 +2,14 @@ data "local_file" "graphql_schema" {
   filename = "../schema.graphql"
 }
 
-resource "aws_appsync_graphql_api" "example" {
+resource "aws_appsync_graphql_api" "this" {
   name                = "${var.app_name}_${var.env}"
   authentication_type = "API_KEY"
   schema              = data.local_file.graphql_schema.content
 }
 
 resource "aws_appsync_api_key" "this" {
-  api_id  = aws_appsync_graphql_api.example.id
+  api_id  = aws_appsync_graphql_api.this.id
   expires = timeadd(timestamp(), "31536000s") # 365日
 }
 
@@ -48,7 +48,7 @@ resource "aws_iam_role_policy" "appsync_policy" {
 }
 
 resource "aws_appsync_datasource" "lambda1_datasource" {
-  api_id           = aws_appsync_graphql_api.example.id
+  api_id           = aws_appsync_graphql_api.this.id
   name             = "lambda1_datasource"
   service_role_arn = aws_iam_role.appsync_role.arn
   type             = "AWS_LAMBDA"
@@ -59,7 +59,7 @@ resource "aws_appsync_datasource" "lambda1_datasource" {
 }
 
 resource "aws_appsync_datasource" "lambda2_datasource" {
-  api_id           = aws_appsync_graphql_api.example.id
+  api_id           = aws_appsync_graphql_api.this.id
   name             = "lambda2_datasource"
   service_role_arn = aws_iam_role.appsync_role.arn
   type             = "AWS_LAMBDA"
@@ -74,7 +74,7 @@ data "local_file" "resolver_js" {
 }
 
 resource "aws_appsync_resolver" "query_example" {
-  api_id      = aws_appsync_graphql_api.example.id
+  api_id      = aws_appsync_graphql_api.this.id
   type        = "Query"
   field       = "test1"
   data_source = aws_appsync_datasource.lambda1_datasource.name
@@ -82,7 +82,7 @@ resource "aws_appsync_resolver" "query_example" {
 }
 
 resource "aws_appsync_resolver" "mutation_example" {
-  api_id      = aws_appsync_graphql_api.example.id
+  api_id      = aws_appsync_graphql_api.this.id
   type        = "Query"
   field       = "test2"
   data_source = aws_appsync_datasource.lambda2_datasource.name
