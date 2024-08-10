@@ -1,5 +1,5 @@
 output "api_id" {
-  value = aws_appsync_graphql_api.example.id
+  value = aws_appsync_graphql_api.this.id
 }
 
 output "api_key" {
@@ -8,5 +8,5 @@ output "api_key" {
 }
 
 output "graphql_url" {
-  value = aws_appsync_graphql_api.example.uris["GRAPHQL"]
+  value = aws_appsync_graphql_api.this.uris["GRAPHQL"]
 }
