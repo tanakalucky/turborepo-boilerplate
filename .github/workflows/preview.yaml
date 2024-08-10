@@ -85,6 +85,11 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm i -g vercel@latest
 
+      - name: Clear Vercel Environment Variables
+        run: |
+          vercel env rm API_KEY preview --yes
+          vercel env rm GRAPHQL_URL preview --yes
+
       - name: Set Vercel Environment Variables
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
