@@ -69,10 +69,6 @@ resource "aws_appsync_datasource" "lambda2_datasource" {
   }
 }
 
-data "local_file" "resolver_js" {
-  filename = "../resolver.js"
-}
-
 resource "aws_appsync_resolver" "query_example" {
   api_id      = aws_appsync_graphql_api.this.id
   type        = "Query"
