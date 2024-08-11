@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Card } from '@repo/ui/card';
-import { gql, useQuery } from 'urql';
+import { useQuery } from 'urql';
 import { graphql } from '../gql';
 
 function Gradient({ conic, className, small }: { small?: boolean; conic?: boolean; className?: string }): JSX.Element {
@@ -43,6 +43,11 @@ const testQueryDocument = graphql(`
     test1 {
       statusCode
       body
+    }
+
+    getData {
+      id
+      title
     }
   }
 `);

@@ -16,8 +16,15 @@ export type Scalars = {
   Float: { input: number; output: number };
 };
 
+export type GetDataResponse = {
+  __typename?: 'GetDataResponse';
+  id: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  getData?: Maybe<Array<Maybe<GetDataResponse>>>;
   test1?: Maybe<Response>;
   test2?: Maybe<Response>;
 };
@@ -33,6 +40,7 @@ export type TestQueryQueryVariables = Exact<{ [key: string]: never }>;
 export type TestQueryQuery = {
   __typename?: 'Query';
   test1?: { __typename?: 'Response'; statusCode: number; body: string } | null;
+  getData?: Array<{ __typename?: 'GetDataResponse'; id: string; title: string } | null> | null;
 };
 
 export const TestQueryDocument = {
@@ -53,6 +61,17 @@ export const TestQueryDocument = {
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'statusCode' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'body' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'getData' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'title' } },
               ],
             },
           },
