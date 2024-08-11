@@ -116,3 +116,15 @@ module "lambda2" {
   ]
   number_of_policies = 2
 }
+
+resource "aws_dynamodb_table" "this" {
+  name           = "${var.app_name}_${var.env}"
+  read_capacity  = 5
+  write_capacity = 5
+  hash_key       = "Id"
+
+  attribute {
+    name = "Id"
+    type = "S"
+  }
+}
