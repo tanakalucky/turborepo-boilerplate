@@ -4,13 +4,13 @@ data "local_file" "graphql_schema" {
 
 resource "aws_appsync_graphql_api" "this" {
   name                = "${var.app_name}_${var.env}"
-  authentication_type = "API_KEY"
+  authentication_type = "AMAZON_COGNITO_USER_POOLS"
   schema              = data.local_file.graphql_schema.content
-}
 
-resource "aws_appsync_api_key" "this" {
-  api_id  = aws_appsync_graphql_api.this.id
-  expires = timeadd(timestamp(), "31536000s") # 365日
+  user_pool_config {
+    default_action = "ALLOW"
+    user_pool_id   = var.user_pool_id
+  }
 }
 
 resource "aws_iam_role" "appsync_role" {
