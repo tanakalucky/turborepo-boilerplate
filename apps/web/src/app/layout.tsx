@@ -3,6 +3,7 @@ import '@repo/ui/styles.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { GraphqlProvider } from '../providers/gql-provider';
+import AuthProvider from '../providers/auth';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -12,15 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
-  const graphqlUrl = process.env.GRAPHQL_URL ?? '';
-  const apiKey = process.env.API_KEY ?? '';
-
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <GraphqlProvider url={graphqlUrl} apiKey={apiKey}>
-          {children}
-        </GraphqlProvider>
+        <AuthProvider>
+          <GraphqlProvider>{children}</GraphqlProvider>
+        </AuthProvider>
       </body>
     </html>
   );

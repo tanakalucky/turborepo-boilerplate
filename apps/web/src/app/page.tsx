@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Card } from '@repo/ui/card';
 import { useQuery } from 'urql';
 import { graphql } from '../gql';
+import { signIn } from 'next-auth/react';
 
 function Gradient({ conic, className, small }: { small?: boolean; conic?: boolean; className?: string }): JSX.Element {
   return (
@@ -53,8 +54,9 @@ const testQueryDocument = graphql(`
 `);
 
 export default function Page(): JSX.Element {
-  const [result] = useQuery({
+  const [result, executeQuery] = useQuery({
     query: testQueryDocument,
+    pause: true,
   });
 
   console.log('test graphql ', result);
@@ -66,6 +68,12 @@ export default function Page(): JSX.Element {
           examples/with-tailwind -&nbsp;
           <code className='font-mono font-bold'>web test</code>
         </p>
+        <button className='px-4 py-2 bg-zinc-800/30' onClick={executeQuery}>
+          get item
+        </button>
+        <button className='px-4 py-2 bg-zinc-800/30' onClick={() => signIn()}>
+          Sign in
+        </button>
         <div className='fixed bottom-0 left-0 flex items-end justify-center w-full h-48 bg-gradient-to-t from-black via-black lg:static lg:h-auto lg:w-auto lg:bg-none'>
           <a
             className='flex gap-2 p-8 pointer-events-none place-items-center lg:pointer-events-auto lg:p-0'
