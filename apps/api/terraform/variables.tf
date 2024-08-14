@@ -21,3 +21,8 @@ variable "secret_key" {
 variable "user_pool_id" {
   type = string
 }
+
+variable "callback_url" {
+  type    = string
+  default = "http://localhost:3000/api/auth/callback/cognito"
+}

@@ -168,3 +168,23 @@ resource "aws_dynamodb_table" "this" {
     type = "S"
   }
 }
+
+resource "aws_cognito_user_pool_client" "this" {
+  name = "${var.app_name}_${var.env}"
+
+  user_pool_id = var.user_pool_id
+
+  generate_secret = true
+
+  allowed_oauth_flows = ["code"]
+  explicit_auth_flows = ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
+  supported_identity_providers = [
+    "COGNITO"
+  ]
+  allowed_oauth_scopes                 = ["openid", "email", "phone"]
+  allowed_oauth_flows_user_pool_client = true
+  callback_urls                        = [var.callback_url]
+
+  prevent_user_existence_errors = "ENABLED"
+
+}
