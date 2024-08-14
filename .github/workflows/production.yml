@@ -10,7 +10,6 @@ env:
   APP_NAME: ${{ github.event.repository.name }}
   ENV: 'prod'
   KEY: 'turborepo-test/production'
-  COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
 
 on:
   push:
@@ -23,6 +22,7 @@ on:
 jobs:
   Deploy-Backend:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
           region = "${REGION}"
           access_key = "${AWS_ACCESS_KEY}"
           secret_key = "${AWS_SECRET_KEY}"
-          user_pool_id = "${COGNITO_USER_POOL_ID}"
+          user_pool_id = "${{ secrets.COGNITO_USER_POOL_ID }}"
           callback_url = "https://${APP_NAME}.vercel.app/api/auth/callback/cognito"
           EOF
         working-directory: ./apps/api/terraform
