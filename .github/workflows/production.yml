@@ -91,6 +91,10 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm i -g vercel@latest
 
+      - name: Terraform Init
+        run: terraform init -backend-config=backend.conf
+        working-directory: ./apps/api/terraform
+
       - name: Get Terraform Outputs
         id: outputs
         run: |
