@@ -26,12 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: preview
 
-    outputs:
-      graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}
-      cognito_client_id: ${{ steps.cognito_client_id.outputs.cognito_client_id}}
-      cognito_client_secret: ${{ steps.cognito_client_secret.outputs.cognito_client_secret}}
-      cognito_issuer: ${{ steps.cognito_issuer.outputs.cognito_issuer}}
-
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -85,22 +79,6 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./apps/api/terraform
 
-      - id: graphql_url
-        run: echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
-      - id: cognito_client_id
-        run: echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
-      - id: cognito_client_secret
-        run: echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
-      - id: cognito_issuer
-        run: echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
   Deploy-Frontend:
     runs-on: ubuntu-latest
     needs: Deploy-Backend
@@ -108,16 +86,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.2
 
       - name: Install Vercel CLI
         run: pnpm i -g vercel@latest
 
+      - name: Get Terraform Outputs
+        id: outputs
+        run: |
+          echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
+          echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+
       - name: Set Vercel Environment Variables
         env:
-          GRAPHQL_URL: ${{ needs.Deploy-Backend.outputs.graphql_url }}
-          COGNITO_CLIENT_ID: ${{ needs.Deploy-Backend.outputs.cognito_client_id }}
-          COGNITO_CLIENT_SECRET: ${{ needs.Deploy-Backend.outputs.cognito_client_secret }}
-          COGNITO_ISSUER: ${{ needs.Deploy-Backend.outputs.cognito_issuer }}
+          GRAPHQL_URL: ${{ steps.outputs.outputs.graphql_url }}
+          COGNITO_CLIENT_ID: ${{ steps.outputs.outputs.cognito_client_id }}
+          COGNITO_CLIENT_SECRET: ${{ steps.outputs.outputs.cognito_client_secret }}
+          COGNITO_ISSUER: ${{ steps.outputs.outputs.cognito_issuer }}
         run: |
           echo $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID preview --force --token $VERCEL_TOKEN
