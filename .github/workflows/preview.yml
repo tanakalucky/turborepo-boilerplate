@@ -26,6 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: preview
 
+    outputs:
+      graphql_url: ${{ steps.outputs.graphql_url}}
+      cognito_client_id: ${{ steps.outputs.cognito_client_id}}
+      cognito_client_secret: ${{ steps.outputs.cognito_client_secret}}
+      cognito_issuer: ${{ steps.outputs.cognito_issuer}}
+
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
