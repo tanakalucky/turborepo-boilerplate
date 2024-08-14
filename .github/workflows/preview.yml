@@ -19,6 +19,8 @@ on:
       - 'apps/**'
       - 'packages/**'
 
+  workflow_dispatch:
+
 jobs:
   Deploy-Backend:
     runs-on: ubuntu-latest
