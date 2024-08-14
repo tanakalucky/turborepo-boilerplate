@@ -27,10 +27,10 @@ jobs:
     environment: preview
 
     outputs:
-      graphql_url: ${{ steps.outputs.graphql_url}}
-      cognito_client_id: ${{ steps.outputs.cognito_client_id}}
-      cognito_client_secret: ${{ steps.outputs.cognito_client_secret}}
-      cognito_issuer: ${{ steps.outputs.cognito_issuer}}
+      graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}
+      cognito_client_id: ${{ steps.cognito_client_id.outputs.cognito_client_id}}
+      cognito_client_secret: ${{ steps.cognito_client_secret.outputs.cognito_client_secret}}
+      cognito_issuer: ${{ steps.cognito_issuer.outputs.cognito_issuer}}
 
     steps:
       - uses: actions/checkout@v4
@@ -85,13 +85,20 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./apps/api/terraform
 
-      - name: Set Outputs
-        id: outputs
-        run: |
-          echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
-          echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
-          echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
-          echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+      - id: graphql_url
+        run: echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
+        working-directory: ./apps/api/terraform
+
+      - id: cognito_client_id
+        run: echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
+        working-directory: ./apps/api/terraform
+
+      - id: cognito_client_secret
+        run: echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
+        working-directory: ./apps/api/terraform
+
+      - id: cognito_issuer
+        run: echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
   Deploy-Frontend:
