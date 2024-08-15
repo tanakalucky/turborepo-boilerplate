@@ -99,7 +99,7 @@ jobs:
           ## PASSWORD is a gpg passphrase stored in Github Secrets.
           secret: ${{ secrets.PASSWORD }}
           op: encode
-          in: ${{ steps.cognito_issuer.outputs.cognito_issuer }}
+          in: ${{ steps.raw_cognito_issuer.outputs.cognito_issuer }}
 
     outputs:
       graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}
