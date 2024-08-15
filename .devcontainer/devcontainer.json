@@ -1,5 +1,5 @@
 {
-  "service": "turborepo-test",
+  "service": "turborepo-boilerplate",
   "dockerComposeFile": "../docker-compose.yml",
   "portsAttributes": {
     "onAutoForward": {
@@ -7,7 +7,7 @@
       "onAutoForward": "ignore"
     }
   },
-  "workspaceFolder": "/turborepo-test",
+  "workspaceFolder": "/turborepo-boilerplate",
   "customizations": {
     "vscode": {
       "extensions": [
