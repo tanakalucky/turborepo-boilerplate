@@ -89,14 +89,17 @@ jobs:
         run: echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
+      - id: raw_cognito_issuer
+        run: echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+        working-directory: ./apps/api/terraform
+
       - uses: cloudposse/github-action-secret-outputs@main
         id: cognito_issuer
-        working-directory: ./apps/api/terraform
         with:
           ## PASSWORD is a gpg passphrase stored in Github Secrets.
           secret: ${{ secrets.PASSWORD }}
           op: encode
-          in: $(terraform output -raw cognito_issuer)
+          in: ${{ steps.cognito_issuer.outputs.cognito_issuer }}
 
     outputs:
       graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}

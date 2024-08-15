@@ -26,12 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: preview
 
-    outputs:
-      graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}
-      cognito_client_id: ${{ steps.cognito_client_id.outputs.cognito_client_id}}
-      cognito_client_secret: ${{ steps.cognito_client_secret.outputs.cognito_client_secret}}
-      cognito_issuer: ${{ steps.cognito_issuer.outputs.cognito_issuer}}
-
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -97,14 +91,23 @@ jobs:
         run: echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
+      - id: raw_cognito_issuer
+        run: echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+        working-directory: ./apps/api/terraform
+
       - uses: cloudposse/github-action-secret-outputs@main
         id: cognito_issuer
-        working-directory: ./apps/api/terraform
         with:
           ## PASSWORD is a gpg passphrase stored in Github Secrets.
           secret: ${{ secrets.PASSWORD }}
           op: encode
-          in: $(terraform output -raw cognito_issuer)
+          in: ${{ steps.cognito_issuer.outputs.cognito_issuer }}
+
+    outputs:
+      graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}
+      cognito_client_id: ${{ steps.cognito_client_id.outputs.cognito_client_id}}
+      cognito_client_secret: ${{ steps.cognito_client_secret.outputs.cognito_client_secret}}
+      cognito_issuer: ${{ steps.cognito_issuer.outputs.cognito_issuer}}
 
   Deploy-Frontend:
     runs-on: ubuntu-latest
