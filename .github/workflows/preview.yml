@@ -8,6 +8,7 @@ env:
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
   REGION: 'ap-northeast-1'
   APP_NAME: ${{ github.event.repository.name }}
+  DOMAIN: dev.${{ github.event.repository.name }}.tanakalucky.com
   ENV: 'dev'
   KEY: ${{ github.event.repository.name }}/develop
 
@@ -60,7 +61,7 @@ jobs:
           access_key = "${AWS_ACCESS_KEY}"
           secret_key = "${AWS_SECRET_KEY}"
           user_pool_id = "${{ secrets.COGNITO_USER_POOL_ID }}"
-          callback_url = "https://${APP_NAME}-git-develop-tanakaluckys-projects.vercel.app/api/auth/callback/cognito"
+          callback_url = "https://${DOMAIN}/api/auth/callback/cognito"
           EOF
         working-directory: ./apps/api/terraform
 
@@ -100,11 +101,13 @@ jobs:
           COGNITO_CLIENT_ID: ${{ steps.outputs.outputs.cognito_client_id }}
           COGNITO_CLIENT_SECRET: ${{ steps.outputs.outputs.cognito_client_secret }}
           COGNITO_ISSUER: ${{ steps.outputs.outputs.cognito_issuer }}
+          NEXT_AUTH_URL: 'https://${DOMAIN}'
         run: |
           echo $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_SECRET | vercel env add COGNITO_CLIENT_SECRET preview --force --token $VERCEL_TOKEN
           echo $COGNITO_ISSUER | vercel env add COGNITO_ISSUER preview --force --token $VERCEL_TOKEN
+          echo $NEXT_AUTH_URL | vercel env add NEXT_AUTH_URL preview --force --token $VERCEL_TOKEN
 
       - name: Pull Vercel Environment Information
         run: vercel env pull ./apps/web/.env --yes --environment=preview --token=$VERCEL_TOKEN
