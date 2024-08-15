@@ -34,6 +34,7 @@ jobs:
           python-version: '3.10'
       - uses: pnpm/action-setup@v4
 
+      # Deploy Backend
       - name: Generate backend.conf
         run: |
           cat <<EOF > backend.conf
@@ -77,61 +78,26 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./apps/api/terraform
 
-      - id: graphql_url
-        run: echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
+      - name: Set Outputs
+        id: outputs
         working-directory: ./apps/api/terraform
+        # When using multiple jobs, the cognito_issuer will be empty due to a secret warning.
+        run: |
+          echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
+          echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
 
-      - id: cognito_client_id
-        run: echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
-      - id: cognito_client_secret
-        run: echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
-      - id: raw_cognito_issuer
-        run: echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
-        working-directory: ./apps/api/terraform
-
-      - uses: cloudposse/github-action-secret-outputs@main
-        id: cognito_issuer
-        with:
-          ## PASSWORD is a gpg passphrase stored in Github Secrets.
-          secret: ${{ secrets.PASSWORD }}
-          op: encode
-          in: ${{ steps.raw_cognito_issuer.outputs.cognito_issuer }}
-
-    outputs:
-      graphql_url: ${{ steps.graphql_url.outputs.graphql_url}}
-      cognito_client_id: ${{ steps.cognito_client_id.outputs.cognito_client_id}}
-      cognito_client_secret: ${{ steps.cognito_client_secret.outputs.cognito_client_secret}}
-      cognito_issuer: ${{ steps.cognito_issuer.outputs.cognito_issuer}}
-
-  Deploy-Frontend:
-    runs-on: ubuntu-latest
-    needs: Deploy-Backend
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-
+      # Deploy frontend
       - name: Install Vercel CLI
         run: pnpm i -g vercel@latest
 
-      - uses: cloudposse/github-action-secret-outputs@main
-        id: cognito_issuer
-        with:
-          ## PASSWORD is a gpg passphrase stored in Github Secrets.
-          secret: ${{ secrets.PASSWORD }}
-          op: decode
-          in: ${{ needs.Deploy-Backend.outputs.cognito_issuer }}
-
       - name: Set Vercel Environment Variables
         env:
-          GRAPHQL_URL: ${{ needs.Deploy-Backend.outputs.graphql_url }}
-          COGNITO_CLIENT_ID: ${{ needs.Deploy-Backend.outputs.cognito_client_id }}
-          COGNITO_CLIENT_SECRET: ${{ needs.Deploy-Backend.outputs.cognito_client_secret }}
-          COGNITO_ISSUER: ${{ steps.cognito_issuer.outputs.out }}
+          GRAPHQL_URL: ${{ steps.outputs.outputs.graphql_url }}
+          COGNITO_CLIENT_ID: ${{ steps.outputs.outputs.cognito_client_id }}
+          COGNITO_CLIENT_SECRET: ${{ steps.outputs.outputs.cognito_client_secret }}
+          COGNITO_ISSUER: ${{ steps.outputs.outputs.cognito_issuer }}
         run: |
           echo $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID preview --force --token $VERCEL_TOKEN
