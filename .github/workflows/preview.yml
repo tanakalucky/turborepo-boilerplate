@@ -7,9 +7,9 @@ env:
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
   REGION: 'ap-northeast-1'
-  APP_NAME: 'turborepo-boilerplate'
+  APP_NAME: ${{ github.event.repository.name }}
   ENV: 'dev'
-  KEY: 'turborepo-boilerplate/develop'
+  KEY: ${{ github.event.repository.name }}/develop
 
 on:
   push:
