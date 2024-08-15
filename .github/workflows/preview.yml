@@ -97,9 +97,14 @@ jobs:
         run: echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
         working-directory: ./apps/api/terraform
 
-      - id: cognito_issuer
-        run: echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+      - uses: cloudposse/github-action-secret-outputs@main
+        id: cognito_issuer
         working-directory: ./apps/api/terraform
+        with:
+          ## PASSWORD is a gpg passphrase stored in Github Secrets.
+          secret: ${{ secrets.PASSWORD }}
+          op: encode
+          in: $(terraform output -raw cognito_issuer)
 
   Deploy-Frontend:
     runs-on: ubuntu-latest
@@ -112,12 +117,20 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm i -g vercel@latest
 
+      - uses: cloudposse/github-action-secret-outputs@main
+        id: cognito_issuer
+        with:
+          ## PASSWORD is a gpg passphrase stored in Github Secrets.
+          secret: ${{ secrets.PASSWORD }}
+          op: decode
+          in: ${{ needs.Deploy-Backend.outputs.cognito_issuer }}
+
       - name: Set Vercel Environment Variables
         env:
           GRAPHQL_URL: ${{ needs.Deploy-Backend.outputs.graphql_url }}
           COGNITO_CLIENT_ID: ${{ needs.Deploy-Backend.outputs.cognito_client_id }}
           COGNITO_CLIENT_SECRET: ${{ needs.Deploy-Backend.outputs.cognito_client_secret }}
-          COGNITO_ISSUER: ${{ needs.Deploy-Backend.outputs.cognito_issuer }}
+          COGNITO_ISSUER: ${{ steps.cognito_issuer.outputs.out }}
         run: |
           echo $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID preview --force --token $VERCEL_TOKEN
