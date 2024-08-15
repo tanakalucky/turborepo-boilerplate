@@ -101,13 +101,12 @@ jobs:
           COGNITO_CLIENT_ID: ${{ steps.outputs.outputs.cognito_client_id }}
           COGNITO_CLIENT_SECRET: ${{ steps.outputs.outputs.cognito_client_secret }}
           COGNITO_ISSUER: ${{ steps.outputs.outputs.cognito_issuer }}
-          NEXTAUTH_URL: https://${DOMAIN}
         run: |
           echo $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID preview --force --token $VERCEL_TOKEN
           echo $COGNITO_CLIENT_SECRET | vercel env add COGNITO_CLIENT_SECRET preview --force --token $VERCEL_TOKEN
           echo $COGNITO_ISSUER | vercel env add COGNITO_ISSUER preview --force --token $VERCEL_TOKEN
-          echo $NEXTAUTH_URL | vercel env add NEXTAUTH_URL preview --force --token $VERCEL_TOKEN
+          echo https://${DOMAIN} | vercel env add NEXTAUTH_URL preview --force --token $VERCEL_TOKEN
 
       - name: Pull Vercel Environment Information
         run: vercel env pull ./apps/web/.env --yes --environment=preview --token=$VERCEL_TOKEN
