@@ -84,10 +84,10 @@ jobs:
         working-directory: ./apps/api/terraform
         # When using multiple jobs, the cognito_issuer will be empty due to a secret warning.
         run: |
-          echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
-          echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
-          echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
-          echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+          echo -n "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
+          echo -n "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
+          echo -n "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
+          echo -n "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
 
       # Deploy frontend
       - name: Install Vercel CLI
@@ -100,11 +100,11 @@ jobs:
           COGNITO_CLIENT_SECRET: ${{ steps.outputs.outputs.cognito_client_secret }}
           COGNITO_ISSUER: ${{ steps.outputs.outputs.cognito_issuer }}
         run: |
-          echo $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL production --force --token $VERCEL_TOKEN
-          echo $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID production --force --token $VERCEL_TOKEN
-          echo $COGNITO_CLIENT_SECRET | vercel env add COGNITO_CLIENT_SECRET production --force --token $VERCEL_TOKEN
-          echo $COGNITO_ISSUER | vercel env add COGNITO_ISSUER production --force --token $VERCEL_TOKEN
-          echo https://${DOMAIN} | vercel env add NEXTAUTH_URL production --force --token $VERCEL_TOKEN
+          echo -n $GRAPHQL_URL | vercel env add NEXT_PUBLIC_GRAPHQL_URL production --force --token $VERCEL_TOKEN
+          echo -n $COGNITO_CLIENT_ID | vercel env add COGNITO_CLIENT_ID production --force --token $VERCEL_TOKEN
+          echo -n $COGNITO_CLIENT_SECRET | vercel env add COGNITO_CLIENT_SECRET production --force --token $VERCEL_TOKEN
+          echo -n $COGNITO_ISSUER | vercel env add COGNITO_ISSUER production --force --token $VERCEL_TOKEN
+          echo -n https://${DOMAIN} | vercel env add NEXTAUTH_URL production --force --token $VERCEL_TOKEN
 
       - name: Pull Vercel Environment Information
         run: vercel env pull ./apps/web/.env --yes --environment=production --token=$VERCEL_TOKEN
