@@ -84,10 +84,10 @@ jobs:
         working-directory: ./apps/api/terraform
         # When using multiple jobs, the cognito_issuer will be empty due to a secret warning.
         run: |
-          echo -n "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
-          echo -n "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
-          echo -n "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
-          echo -n "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
+          echo "graphql_url=$(terraform output -raw graphql_url)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_id=$(terraform output -raw cognito_client_id)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_secret=$(terraform output -raw cognito_client_secret)" >> "$GITHUB_OUTPUT"
+          echo "cognito_issuer=$(terraform output -raw cognito_issuer)" >> "$GITHUB_OUTPUT"
 
       # Deploy frontend
       - name: Install Vercel CLI
