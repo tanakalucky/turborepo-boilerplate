@@ -188,3 +188,9 @@ resource "aws_cognito_user_pool_client" "this" {
   prevent_user_existence_errors = "ENABLED"
 
 }
+
+resource "aws_cognito_user_pool_domain" "this" {
+  count        = var.env != "local" ? 1 : 0
+  domain       = var.cognito_domain
+  user_pool_id = var.user_pool_id
+}

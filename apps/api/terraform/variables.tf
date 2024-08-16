@@ -26,3 +26,8 @@ variable "callback_url" {
   type    = string
   default = "http://localhost:3000/api/auth/callback/cognito"
 }
+
+variable "cognito_domain" {
+  type    = string
+  default = "http:localhost:3000"
+}
